@@ -32,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
         this.playerBlue = this.createPlayer("blue")
 
         this.currentPlayer = Math.random() >= 0.5 ? this.playerRed : this.playerBlue
+        this.currentPlayer.locked = false;
         this.updateText();
     }
 
@@ -47,6 +48,7 @@ export default class GameScene extends Phaser.Scene {
     update(time, delta) {
 
     }
+
 
     createSlots(startX, startY, colAmount, rowAmount) {
         this.graphics = this.add.graphics();
@@ -72,6 +74,17 @@ export default class GameScene extends Phaser.Scene {
 
 
         }*/
+    }
+
+    otherPlayersTurn() {
+        if (this.currentPlayer == this.playerRed) {
+            this.currentPlayer = this.playerBlue;
+        } else {
+            this.currentPlayer = this.playerRed;
+        }
+        this.currentPlayer.locked = false;
+        this.currentPlayer.addCoin(this.cameras.main.centerX, 0);
+        this.updateText()
     }
 
 }
