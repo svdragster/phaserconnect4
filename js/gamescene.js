@@ -49,7 +49,6 @@ export default class GameScene extends Phaser.Scene {
 
     }
 
-
     createSlots(startX, startY, colAmount, rowAmount) {
         this.graphics = this.add.graphics();
         var scene = this;

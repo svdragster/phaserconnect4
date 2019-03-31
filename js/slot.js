@@ -16,7 +16,7 @@ export default class Slot extends Phaser.GameObjects.Zone {
 
     fill(coin) {
         this.empty = false;
-        this.coin = coin;
+        this.coin  = coin;
     }
 
 }
