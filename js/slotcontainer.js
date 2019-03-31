@@ -13,8 +13,13 @@ export default class Slotcontainer {
         this.startY = startY;
         this.width  = width;
         this.height = height;
+        this.slots  = this.createArrays(width, height);
+        this.firebaseSlots = this.createArrays(width, height);
+    }
+
+    createArrays(width, height) {
         for (var slots=[]; slots.push([height])<width;);
-        this.slots = slots;
+        return slots;
     }
 
     arrayXtoScreenX(arrayX, width) {
@@ -32,13 +37,17 @@ export default class Slotcontainer {
         let slot = new Slot(this.scene, x, y, width, height);
         this.slots[arrayX][arrayY] = slot;
         slot.on('pointermove', function (pointer) {
-            this.scene.currentPlayer.moveCoin(x, container.startY - height - 20);
+            if (this.scene.currentPlayer == this.scene.thisPlayer) {
+                this.scene.currentPlayer.moveCoin(x, container.startY - height - 20);
+            }
         });
         slot.on('pointerout', function (pointer) {
 
         });
         slot.on('pointerdown', function (pointer) {
-            container.dropCoin(arrayX, height);
+            if (this.scene.currentPlayer == this.scene.thisPlayer) {
+                container.dropCoin(arrayX, height);
+            }
         });
     }
 
@@ -140,6 +149,16 @@ export default class Slotcontainer {
         var newY = y + directionY;
         // recursion
         this.findAnotherCoinInDirection(player, newX, newY, directionX, directionY, recursionSlots);
+    }
+
+    toFirebase() {
+        for (var x=0; x<this.width; x++) {
+            for (var y=0; y<this.height; y++) {
+                var data = this.slots[x][y].toFirebase();
+                this.firebaseSlots[x][y] = data;
+            }
+        }
+        return this.firebaseSlots;
     }
 
 }

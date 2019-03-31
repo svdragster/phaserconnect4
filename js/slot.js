@@ -1,3 +1,6 @@
+import Coin from "./coin.js";
+import {firebaseManager} from "./index.js";
+
 export default class Slot extends Phaser.GameObjects.Zone {
 
     constructor(scene, x, y, width, height) {
@@ -12,11 +15,35 @@ export default class Slot extends Phaser.GameObjects.Zone {
         var graphics = this.scene.graphics;
         graphics.lineStyle(2, 0xFF8888 + Math.random() * 0x005555);
         graphics.strokeRect(this.x - this.input.hitArea.width / 2, this.y - this.input.hitArea.height / 2, this.input.hitArea.width, this.input.hitArea.height);
+
+        let slot = this;
+        var ref = firebaseManager.db.ref("game/slots/" + x + "/" + y);
+        ref.on('value', function(snapshot) {
+            var val = snapshot.val();
+            if (val == null) return;
+            if (val.empty) return;
+            slot.empty = false;
+            slot.coin  = new Coin(scene, val.x, val.y, val.color);
+            scene.slotcontainer.checkWin();
+        });
     }
 
     fill(coin) {
         this.empty = false;
         this.coin  = coin;
+
+        firebaseManager.db.ref("game/slots/" + this.x + "/" + this.y).set(this.toFirebase());
     }
+
+    toFirebase() {
+        return {
+            x: this.x,
+            y: this.y,
+            empty: this.empty,
+            color: this.coin == null ? null : this.coin.color
+        };
+    }
+
+
 
 }

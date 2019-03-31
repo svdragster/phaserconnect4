@@ -1,6 +1,7 @@
 import Player from "./player.js";
 import Slotcontainer from "./slotcontainer.js";
 import Slot from "./slot.js";
+import {firebaseManager} from "./index.js";
 
 
 export default class GameScene extends Phaser.Scene {
@@ -11,6 +12,13 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         this.text = this.add.text(16, 16, "Connect 4", {
+            font: "18px monospace",
+            fill: "#000000",
+            padding: { x: 20, y: 10 },
+            backgroundColor: "#ffffff"
+        })
+        .setScrollFactor(0);
+        this.colorText = this.add.text(16, 64, "Farbe noch unbekannt", {
             font: "18px monospace",
             fill: "#000000",
             padding: { x: 20, y: 10 },
@@ -28,12 +36,61 @@ export default class GameScene extends Phaser.Scene {
     }
 
     createPlayers() {
-        this.playerRed  = this.createPlayer("red")
-        this.playerBlue = this.createPlayer("blue")
+        let scene       = this;
+        this.playerRed  = this.createPlayer("red");
+        this.playerBlue = this.createPlayer("blue");
+        this.assignThisPlayer();
 
-        this.currentPlayer = Math.random() >= 0.5 ? this.playerRed : this.playerBlue
-        this.currentPlayer.locked = false;
-        this.updateText();
+        if (this.thisPlayer == this.playerRed) {
+            this.currentPlayer = Math.random() >= 0.5 ? this.playerRed : this.playerBlue
+            this.updateFirebaseCurrentPlayer();
+        }
+        firebaseManager.db.ref("game/currentPlayer").on('value', function(snap) {
+            var val = snap.val();
+            var color = val.color;
+            var x     = val.x;
+            var y     = val.y;
+            if (color == "red") {
+                scene.currentPlayer = scene.playerRed;
+            } else {
+                scene.currentPlayer = scene.playerBlue;
+            }
+            scene.currentPlayer.locked = false;
+            if (scene.currentPlayer != scene.thisPlayer) {
+                scene.currentPlayer.moveCoin(x, y);
+            }
+            scene.updateText();
+        })
+
+    }
+
+    updateFirebaseCurrentPlayer(force) {
+        if (this.currentPlayer == this.thisPlayer || force) {
+            console.log(this.currentPlayer.activeCoin.x, this.currentPlayer.activeCoin.y)
+            firebaseManager.setCurrentPlayer({
+                color: this.currentPlayer.color,
+                x: this.currentPlayer.activeCoin.x,
+                y: this.currentPlayer.activeCoin.y
+            });
+        }
+    }
+
+    assignThisPlayer() {
+        let scene = this;
+        firebaseManager.getNextPlayer(function(nextPlayer) {
+            console.log("nextPlayer: " + nextPlayer);
+            if (nextPlayer == "red") {
+                scene.assignPlayer(scene.playerRed);
+            } else {
+                scene.assignPlayer(scene.playerBlue);
+            }
+        });
+    }
+
+    assignPlayer(player) {
+        this.thisPlayer = player;
+        this.colorText.text = "You are " + player.color + "!";
+        this.colorText.updateText();
     }
 
     createPlayer(color) {
@@ -62,6 +119,8 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
+        firebaseManager.writeSlots(this.slotcontainer.toFirebase());
+
         /*this.zones = Array();
 
         for (var i=0; i<amount; i++) {
@@ -84,6 +143,7 @@ export default class GameScene extends Phaser.Scene {
         this.currentPlayer.locked = false;
         this.currentPlayer.addCoin(this.cameras.main.centerX, 0);
         this.updateText()
+        this.updateFirebaseCurrentPlayer(true);
     }
 
 }

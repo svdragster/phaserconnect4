@@ -1,4 +1,5 @@
 import GameScene from "./gamescene.js";
+import FirebaseManager from "./firebaseManager.js";
 
 const config = {
   type: Phaser.AUTO,
@@ -14,4 +15,5 @@ const config = {
   }
 };
 
+export let firebaseManager = new FirebaseManager();
 const game = new Phaser.Game(config);

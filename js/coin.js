@@ -16,6 +16,7 @@ export default class Coin extends Phaser.GameObjects.Sprite {
         this.flash  = false;
         this.flashColor = 0;
         this.flashDir   = 1;
+        this.lastFirebaseUpdate = Date.now();
 
         this.scene.add.existing(this);
     }
@@ -48,6 +49,10 @@ export default class Coin extends Phaser.GameObjects.Sprite {
                 this.waypoints.shift();
                 if (this.waypoints.length == 0) {
                     this.moveTo = false;
+                }
+                if (Date.now() - this.lastFirebaseUpdate >= 100) {
+                    this.lastFirebaseUpdate = Date.now();
+                    this.scene.updateFirebaseCurrentPlayer();
                 }
             }
         }
