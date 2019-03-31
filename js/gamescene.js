@@ -1,4 +1,7 @@
 import Player from "./player.js";
+import Slotcontainer from "./slotcontainer.js";
+import Slot from "./slot.js";
+
 
 export default class GameScene extends Phaser.Scene {
     preload() {
@@ -15,7 +18,12 @@ export default class GameScene extends Phaser.Scene {
         })
         .setScrollFactor(0);
 
-        this.createZones(50, 300, 50, 300, 7);
+        this.createSlots(
+            50,   // startX
+            300,  // startY
+            7,    // width
+            6     // height
+        );
         this.createPlayers();
     }
 
@@ -40,26 +48,30 @@ export default class GameScene extends Phaser.Scene {
 
     }
 
-    createZones(startX, startY, width, height, amount) {
-        this.zones = Array();
-        var graphics = this.add.graphics();
+    createSlots(startX, startY, colAmount, rowAmount) {
+        this.graphics = this.add.graphics();
         var scene = this;
+        var startX = 200;
+        var startY = 200;
+        var slotSize = 50;
+        this.slotcontainer = new Slotcontainer(this, startX, startY, colAmount, rowAmount);
+        for (var x=0; x<colAmount; x++) {
+            for (var y=0; y<rowAmount; y++) {
+                this.slotcontainer.addSlot(x, y, slotSize, slotSize);
+            }
+        }
+
+        /*this.zones = Array();
+
         for (var i=0; i<amount; i++) {
             let x = startX + i * (width+5);
             let y = startY;
             let zoneIndex = i;
-            var zone = this.add.zone(x, y, width, height).setInteractive()
-            zone.on('pointermove', function (pointer) {
-                scene.currentPlayer.move(x, y - height/2 - 35)
-                console.log(zoneIndex)
-            });
-            zone.on('pointerout', function (pointer) {
+            let slot = new Slot(scene, x, y, width, height);
 
-            });
 
-            graphics.lineStyle(2, 0xffaa00 + (zoneIndex*30));
-            graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
-        }
+
+        }*/
     }
 
 }
