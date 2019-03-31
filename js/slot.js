@@ -10,7 +10,7 @@ export default class Slot extends Phaser.GameObjects.Zone {
         this.setInteractive();
 
         var graphics = this.scene.graphics;
-        graphics.lineStyle(2, 0xff0000 + Math.random()*0x00ffff);
+        graphics.lineStyle(2, 0xFF8888 + Math.random() * 0x005555);
         graphics.strokeRect(this.x - this.input.hitArea.width / 2, this.y - this.input.hitArea.height / 2, this.input.hitArea.width, this.input.hitArea.height);
     }
 
