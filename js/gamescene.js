@@ -56,17 +56,30 @@ export default class GameScene extends Phaser.Scene {
                 scene.currentPlayer = scene.playerBlue;
             }
             scene.currentPlayer.locked = false;
-            if (scene.currentPlayer != scene.thisPlayer) {
+            if (scene.currentPlayer == scene.thisPlayer) {
+
+            } else {
                 scene.currentPlayer.moveCoin(x, y);
             }
             scene.updateText();
         })
-
+        firebaseManager.db.ref("game/currentPlayer/color").on('value', function(snap) {
+            var val = snap.val();
+            console.log("now -> " + val);
+            if (val == "red") {
+                //scene.playerRed.activeCoin.clearWaypoints();
+                //scene.playerBlue.activeCoin.clearWaypoints();
+                scene.playerRed.addCoin(scene.cameras.main.centerX, 0);
+            } else {
+                //scene.playerBlue.activeCoin.clearWaypoints();
+                //scene.playerRed.activeCoin.clearWaypoints();
+                scene.playerBlue.addCoin(scene.cameras.main.centerX, 0);
+            }
+        });
     }
 
     updateFirebaseCurrentPlayer(force) {
         if (this.currentPlayer == this.thisPlayer || force) {
-            console.log(this.currentPlayer.activeCoin.x, this.currentPlayer.activeCoin.y)
             firebaseManager.setCurrentPlayer({
                 color: this.currentPlayer.color,
                 x: this.currentPlayer.activeCoin.x,
@@ -142,10 +155,8 @@ export default class GameScene extends Phaser.Scene {
             this.currentPlayer = this.playerRed;
             this.otherPlayer   = this.playerBlue;
         }
+
         this.currentPlayer.locked = false;
-        if (this.thisPlayer == this.currentPlayer) {
-            this.currentPlayer.addCoin(this.cameras.main.centerX, 0);
-        }
         this.updateText()
         this.updateFirebaseCurrentPlayer(true);
     }

@@ -6,6 +6,8 @@ class Waypoint {
     }
 }
 
+let id = 0;
+
 export default class Coin extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture) {
         super(scene, x, y, texture, null);
@@ -32,10 +34,16 @@ export default class Coin extends Phaser.GameObjects.Sprite {
         this.moveTo = true;
     }
 
+    clearWaypoints() {
+        this.waypoints = Array();
+        this.moveTo    = false;
+    }
+
     move(x, y) {
         this.waypoints = Array();
         this.waypoints.push(new Waypoint(x, y, 0.3))
         this.moveTo = true;
+        console.log(this.color + " MOOOOVE " + x + ", " + y);
     }
 
     preUpdate(time, delta) {

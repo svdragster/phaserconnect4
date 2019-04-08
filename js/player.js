@@ -14,6 +14,8 @@ export default class Player {
     }
 
     addCoin(x, y) {
+        console.log("add coin " + this.color);
+        if (this.activeCoin != undefined)  console.log("- " + this.activeCoin.moveTo);
         this.activeCoin = new Coin(this.scene, x, y - 100, this.color);
         this.addWaypoint(x, y + 60, 0.15);
     }

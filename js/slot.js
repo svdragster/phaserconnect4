@@ -24,14 +24,17 @@ export default class Slot extends Phaser.GameObjects.Zone {
             if (val.empty) return;
             slot.empty = false;
             slot.coin  = new Coin(scene, val.x, val.y, val.color);
-            scene.slotcontainer.checkWin();
+
             if (val.color == "red") {
+                scene.playerRed.activeCoin.clearWaypoints();
                 scene.playerRed.activeCoin.x = 0;
                 scene.playerRed.activeCoin.y = 0;
             } else {
+                scene.playerBlue.activeCoin.clearWaypoints();
                 scene.playerBlue.activeCoin.x = 0;
                 scene.playerBlue.activeCoin.y = 0;
             }
+            scene.slotcontainer.checkWin();
         });
     }
 
