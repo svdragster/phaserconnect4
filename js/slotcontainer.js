@@ -61,7 +61,10 @@ export default class Slotcontainer {
 
             this.checkWin();
 
-            this.scene.otherPlayersTurn()
+            this.scene.otherPlayersTurn();
+
+            //this.scene.currentPlayer.activeCoin.x = 0;
+            //this.scene.currentPlayer.activeCoin.y = 0;
         } else {
             player.addWaypoint(highestSlot.x, highestSlot.y - slotHeight, 0.5);
             player.addWaypoint(highestSlot.x, highestSlot.y - slotHeight - 20, 0.3);

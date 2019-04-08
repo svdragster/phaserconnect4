@@ -137,11 +137,15 @@ export default class GameScene extends Phaser.Scene {
     otherPlayersTurn() {
         if (this.currentPlayer == this.playerRed) {
             this.currentPlayer = this.playerBlue;
+            this.otherPlayer   = this.playerRed;
         } else {
             this.currentPlayer = this.playerRed;
+            this.otherPlayer   = this.playerBlue;
         }
         this.currentPlayer.locked = false;
-        this.currentPlayer.addCoin(this.cameras.main.centerX, 0);
+        if (this.thisPlayer == this.currentPlayer) {
+            this.currentPlayer.addCoin(this.cameras.main.centerX, 0);
+        }
         this.updateText()
         this.updateFirebaseCurrentPlayer(true);
     }
